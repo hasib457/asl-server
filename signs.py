@@ -113,5 +113,14 @@ signs ={"want": 1026,
 		"paint": 1111,
 		"city": 1112,
 		"hat": 1113,
-		"bowling": 1114
+		"bowling": 1114,
+		"finish": 1115,
+		"done": 1115,
+		"go": 1116,
+		"mother": 1117,
+		"mom": 1117,
+		"possible": 1118,
+		"can": 1118,
+		"yeah":1119,
+		"yes": 1119
 	}

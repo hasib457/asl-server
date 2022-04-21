@@ -23,29 +23,28 @@ class Sign_text():
     def remove_stopwords(self, words=None)-> list:
         if words!=None:
             self.words=words        
-        stop_words = {"are","should have","an",'the','hasn’t','won’t','doing','is',
-                    'will','don’t','having','had','has','hadn’t','shouldn’t','a',
-                    'was','were','am', 'have', 'has',"’ve", "’s", "n’t", "’", "s", "t",
+        stop_words = {"are","should have","an",'the','hasn’t','wo', "ve",
+                    'will','a','be', 'have', 'has',"’ve", "’s", "n’t", "’", "s", "t",
                     "’d", "the", "are", "than", "should", "if", "some", "ll", "’ll",
                     "re", "ca", "an", "tahn", "of", "by", "then", "’", "lot",
                     'wasn’t','wouldn’t','didn’t','been','shall','can','could',
                     'haven’t','did',"does","were not",'would','that','there',
                     'won', "you’ll", "should’ve", "mightn’t", 'more', 'mustn', 'shouldn',
                     'hasn', 'didn', "didn’t", 'couldn', "you'd", "wasn't", 'whom', 'wouldn',
-                    'wasn', 'most', 'own', 'through', 'few', 'o', 'haven', 'nor',
-                    'mightn', 'very', 'too', 'so', 'do', "mustn't", "isn't", 'ours',
+                    'wasn', 'most', 'through', 'o', 'haven', 'nor',
+                    'mightn', 'very', 'too', 'so', "mustn't", "isn't",
                     'y', "aren't", "don’t", 'm', "you’ve", "you’re", "shan’t", 'over', "hadn’t",
-                    'such', 'and', "shouldn’t", 'out', "that’ll", 'our', "couldn’t", 'while',
-                    'this', "won’t", 'ma', 'off', 'as', 'ain', 'about', 'aren', "hasn’t", 'hadn', 
-                    'don', 'weren', 'into', "weren’t", 'shan', 'each', 'isn', 'himself', 'now', 
-                    "doesn’t", 'but', 'needn', 'down', 'below', "haven’t", 'doesn', 'themselves', 
-                    "wouldn’t", 'd', 'further', 'any', 'vebeing',"’d"}
+                    'such', "shouldn’t", "that’ll", 'our', "couldn’t", 'while',
+                    'this', "won’t", 'ma', 'off', 'as', 'ain', 'aren', "hasn’t", 'hadn', 
+                    'don', 'weren', "weren’t", 'shan' 'isn', 'himself',
+                    "doesn’t", 'but', 'needn', "haven’t", 'doesn', 'themselves', 
+                    "wouldn’t", 'd', 'further', 'vebeing',"’d", "to"}
 
         # stop_words = set(stopwords.words("english"))
         filtered_text = []
         for word in self.words:
             if word not in stop_words:
-                if word == "n't":
+                if word in ["n’t", "’t"]:
                     filtered_text.append("not")
                 else:
                     filtered_text.append(word)
@@ -83,28 +82,30 @@ class Sign_text():
         """ 
         if text != None:
             self.text = text
+        
+        print(f'[INFO] text {self.text}')
+        
         self.remove_punctuation() # remove punctuation
         self.words = word_tokenize(self.text) # tokenize text 
-        self.remove_stopwords()    # remove stop words
+        # print(f'[INFO] tokenize text {self.words}')
         self.lemmatize_word() # lemmatize string
+        # print(f'[INFO] lemmatize string {self.words}')
+        self.remove_stopwords()    # remove stop words
+        # print(f'[INFO] remove stop words {self.words}')
         self.word_id()
+        # print(f'[INFO] IDS {self.ids}')
 
         for id in self.ids:
             try:
                 vid = cv2.VideoCapture(self.path + str(id) + ".mp4")
                 for i in range(10):
-                        success, frame = vid.read()  # read the camera frame
-                # while True:
+                        success, frame = vid.read()  # read video frame
                 for i in range(60):     
-                    success, frame = vid.read()  # read the camera frame
+                    success, frame = vid.read()  # read video frame
                     if not success:
                         break
                     else:
-<<<<<<< HEAD
-#                        time.sleep(0.01)  
-=======
-#                         time.sleep(0.01)  
->>>>>>> bab8ab6af95eb0f1aafbf4b3823a9123be21ddeb
+                        # time.sleep(0.01)  
                         width = int((frame.shape[1])*0.50)
                         height = int((frame.shape[0])*0.50)  
                         frame = cv2.resize(frame, (width, height), interpolation=cv2.INTER_AREA) 

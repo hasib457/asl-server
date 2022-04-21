@@ -23,10 +23,7 @@ sio.on("stream_text", (pyload)=>{
 
 });
 
-sio.on("sign_txt", (pyload)=>{
-  console.log(pyload);
 
-});
 
 function arrayBufferToBase64(buffer) {
   var binary = '';
