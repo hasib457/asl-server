@@ -82,20 +82,14 @@ class Sign_text():
         """ 
         if text != None:
             self.text = text
-        
-        print(f'[INFO] text {self.text}')
-        
         self.remove_punctuation() # remove punctuation
         self.words = word_tokenize(self.text) # tokenize text 
-        # print(f'[INFO] tokenize text {self.words}')
         self.lemmatize_word() # lemmatize string
-        # print(f'[INFO] lemmatize string {self.words}')
         self.remove_stopwords()    # remove stop words
-        # print(f'[INFO] remove stop words {self.words}')
         self.word_id()
-        # print(f'[INFO] IDS {self.ids}')
 
         for id in self.ids:
+            Btime = time.time()
             try:
                 vid = cv2.VideoCapture(self.path + str(id) + ".mp4")
                 for i in range(10):
@@ -106,8 +100,8 @@ class Sign_text():
                         break
                     else:
                         # time.sleep(0.01)  
-                        width = int((frame.shape[1])*0.50)
-                        height = int((frame.shape[0])*0.50)  
+                        width = int((frame.shape[1])*0.30)
+                        height = int((frame.shape[0])*0.30)  
                         frame = cv2.resize(frame, (width, height), interpolation=cv2.INTER_AREA) 
                         ret, buffer = cv2.imencode('.jpg', frame)
                         frame = buffer.tobytes()
@@ -123,14 +117,23 @@ class Sign_predict():
     def sign_predict(self, landmarks):
         try:
             pred = []
+            # loop over frames
             for frame in landmarks:
                 cleaned = []
-                for mark in frame.landmark:
-                    cleaned.append(mark.x)
-                    cleaned.append(mark.y)
-                cleaned = np.reshape(cleaned, (1,-1))
-                if cleaned.sum():
-                    pred.append(self.clf.predict(cleaned)[0])
+                try:
+                    # extract landmarks from frame
+                    for mark in frame.landmark:
+                        cleaned.append(mark.x)
+                        cleaned.append(mark.y)
+                    cleaned = np.reshape(cleaned, (1,-1))
+                except:
+                    # extract landmarks from frame on anther way
+                    for mark in frame:
+                        cleaned.append(mark['x'])
+                        cleaned.append(mark['y'])
+                    cleaned = np.reshape(cleaned, (1,-1))
+                # make prediction for each frame
+                pred.append(self.clf.predict(cleaned)[0])
             return mode(pred)
         except:
             return False
