@@ -22,10 +22,10 @@ def stream_text(sid, data):
         OUTPUT: emit signs frames for the recived text
     """
     for sign_frame in text_to_sign.sign_gen(data["data"]):
-        sio.emit("stream_text", {'data': sign_frame, "id":data["id"]}, to=sid) 
+        sio.emit("stream_text", {'data': sign_frame, "id":data.get("id")}, to=sid) 
     sio.emit("send", to=sid)
    
 @sio.event
 def stream_sign(sid, data):
     pred = sign_predict.sign_predict(data["landmarks"])
-    sio.emit("stream_sign", {"text": pred},to= sid)
+    sio.emit("stream_sign", {"text": pred, "id": data.get("id")},to= sid)

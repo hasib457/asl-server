@@ -3,6 +3,7 @@ const canvasElement = document.getElementsByClassName('output_canvas')[0];
 const canvasCtx = canvasElement.getContext('2d');
 var count = 0;
 var frames = [];
+
 function onResults(results) {
   canvasCtx.save();
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -30,23 +31,27 @@ function onResults(results) {
 const hands = new Hands({locateFile: (file) => {
   return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
 }});
+
 hands.setOptions({
   maxNumHands: 1,
   modelComplexity: 1,
   minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5
+  minTrackingConfidence: 0.5,
+  selfieMode: true
 });
 hands.onResults(onResults);
 
 const camera = new Camera(videoElement, {
   onFrame: async () => {
+
     await hands.send({image: videoElement});
+    
   },
 
 });
 camera.start();
 
-const sio = io();
+const sio = io("https://asl.connect-asl.site/");
 sio.on('connect', () => {
   console.log('connected');
   
