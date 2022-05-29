@@ -111,7 +111,7 @@ class Sign_text():
 
 
 class Sign_predict():
-    checkpoints = 'model.pkl'
+    checkpoints = 'new_model.pkl'
     clf = joblib.load(checkpoints)
 
     def sign_predict(self, landmarks):

@@ -51,7 +51,7 @@ const camera = new Camera(videoElement, {
 });
 camera.start();
 
-const sio = io("https://asl.connect-asl.site/");
+const sio = io();
 sio.on('connect', () => {
   console.log('connected');
   
