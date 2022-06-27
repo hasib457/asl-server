@@ -23,7 +23,7 @@ def stream_text(sid, data):
     """
     for sign_frame in text_to_sign.sign_gen(data.get("data")):
         sio.emit("stream_text", {'data': sign_frame, "id":data.get("id")}, to=sid) 
-    sio.emit("send", to=sid)
+    sio.emit("send","id": data.get("id"), to=sid)
    
 @sio.event
 def stream_sign(sid, data):
