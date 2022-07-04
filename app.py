@@ -10,6 +10,7 @@ sign_predict = Sign_predict()
 @sio.event
 def connect(sid, environ):
     print(f'[INFO] client connected: {sid}')
+    sio.emit("send",{"from": "connect"}, to=sid)
 
 @sio.event
 def disconnect(sid):
@@ -23,7 +24,7 @@ def stream_text(sid, data):
     """
     for sign_frame in text_to_sign.sign_gen(data.get("data")):
         sio.emit("stream_text", {'data': sign_frame, "id":data.get("id")}, to=sid) 
-    sio.emit("send", to=sid)
+    sio.emit("send",{"from": "stream_text"}, to=sid)
    
 @sio.event
 def stream_sign(sid, data):
