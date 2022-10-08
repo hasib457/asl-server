@@ -9,7 +9,7 @@ import datetime
 
 
 def clean_data(data_dir):
-    df = pd.read_csv('alphapet.csv')
+    df = pd.read_csv(data_dir)
     df.columns = [i for i in range(df.shape[1])]
     df = df.rename(columns={42: 'Output'})
     all_null_values = df[df.iloc[:, 0] == 0].index

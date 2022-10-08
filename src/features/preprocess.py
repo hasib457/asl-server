@@ -1,13 +1,18 @@
-import cv2, os, nltk, time, joblib
+import cv2, os, time, joblib
 import numpy as np
 from statistics import mode
 from signs import signs, letters
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from dataclasses import dataclass
+from nltk.corpus import stopwords
 
 @dataclass
 class SignToText():
+    """
+        process text and generate signs corresponding to text 
+        take text and return list of sign's video frames
+    """ 
     lemmatizer = WordNetLemmatizer()
     text : str = "Hello, how are you?"
     path : str = ''
@@ -25,33 +30,15 @@ class SignToText():
     def remove_stopwords(self, words=None)-> list:
         if words!=None:
             self.words=words        
-        stop_words = {"are","should have","an",'the','hasn’t','wo', "ve",
-                    'will','a','be', 'have', 'has',"’ve", "’s", "n’t", "’", "s", "t",
-                    "’d", "the", "are", "than", "should", "if", "some", "ll", "’ll",
-                    "re", "ca", "an", "tahn", "of", "by", "then", "’", "lot",
-                    'wasn’t','wouldn’t','didn’t','been','shall','can','could',
-                    'haven’t','did',"does","were not",'would','that','there',
-                    'won', "you’ll", "should’ve", "mightn’t", 'more', 'mustn', 'shouldn',
-                    'hasn', 'didn', "didn’t", 'couldn', "you'd", "wasn't", 'whom', 'wouldn',
-                    'wasn', 'most', 'through', 'o', 'haven', 'nor',
-                    'mightn', 'very', 'too', 'so', "mustn't", "isn't",
-                    'y', "aren't", "don’t", 'm', "you’ve", "you’re", "shan’t", 'over', "hadn’t",
-                    'such', "shouldn’t", "that’ll", 'our', "couldn’t", 'while',
-                    'this', "won’t", 'ma', 'off', 'as', 'ain', 'aren', "hasn’t", 'hadn', 
-                    'don', 'weren', "weren’t", 'shan' 'isn', 'himself',
-                    "doesn’t", 'but', 'needn', "haven’t", 'doesn', 'themselves', 
-                    "wouldn’t", 'd', 'further', 'vebeing',"’d", "to"}
-
-        # stop_words = set(stopwords.words("english"))
-        filtered_text = []
-        for word in self.words:
-            if word not in stop_words:
+            stop_words = set(stopwords.words("english"))
+            filtered_text = []
+            for word in self.words:
                 if word in ["n’t", "’t"]:
                     filtered_text.append("not")
                 else:
                     filtered_text.append(word)
-        self.words = filtered_text
-        return  self.words
+            self.words = filtered_text
+            return  self.words
 
     def lemmatize_word(self, words=None)-> list:
         if words!=None:
@@ -111,14 +98,15 @@ class SignToText():
                 continue
 
 
-@dataclass
 class SignPredict():
-    model_path : str
-
-    def load_model(self, model_path=None)-> object:
-        if model_path != None:
-            self.model_path = model_path
-        return joblib.load(self.model_path)
+    """
+    predict sign from landmarks
+    """
+    def __init__(self, model_path : str):
+        if os.path.exists(model_path):
+            self.model = joblib.load(model_path)
+        else:
+            raise Exception("Model not found")
 
     def sign_predict(self, landmarks):
         try:
@@ -139,7 +127,7 @@ class SignPredict():
                         cleaned.append(mark['y'])
                     cleaned = np.reshape(cleaned, (1,-1))
                 # make prediction for each frame
-                pred.append(self.clf.predict(cleaned)[0])
+                pred.append(self.model.predict(cleaned)[0])
             return mode(pred)
-        except:
-            return False
+        except Exception as e:
+            return e 
