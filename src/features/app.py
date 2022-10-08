@@ -1,4 +1,3 @@
-from pyexpat import model
 import socketio, eventlet
 from preprocess import SignPredict, SignToText
 
